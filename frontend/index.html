@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Server Monitor Dashboard</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="logo">
+                <i class="fa-solid fa-server"></i>
+                <h2>SysMonitor</h2>
+            </div>
+            <nav class="nav-menu">
+                <a href="#" class="nav-item active"><i class="fa-solid fa-chart-line"></i> Dashboard</a>
+                <a href="#servers" class="nav-item"><i class="fa-solid fa-network-wired"></i> Servers</a>
+                <a href="#alerts" class="nav-item"><i class="fa-solid fa-bell"></i> Alerts</a>
+                <a href="#settings" class="nav-item"><i class="fa-solid fa-gear"></i> Settings</a>
+            </nav>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <header class="topbar">
+                <div class="search-bar">
+                    <i class="fa-solid fa-search"></i>
+                    <input type="text" placeholder="Search servers or alerts...">
+                </div>
+                <div class="user-profile">
+                    <div class="notification-bell">
+                        <i class="fa-solid fa-bell"></i>
+                        <span class="badge" id="alert-badge">0</span>
+                    </div>
+                    <img src="https://ui-avatars.com/api/?name=Admin&background=6366f1&color=fff" alt="Admin" class="avatar">
+                </div>
+            </header>
+
+            <div class="dashboard-content">
+                <div class="header-section">
+                    <h1>Dashboard Overview</h1>
+                    <p>Real-time server monitoring and email alert system</p>
+                </div>
+
+                <!-- Stats Cards -->
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-icon server-icon"><i class="fa-solid fa-server"></i></div>
+                        <div class="stat-details">
+                            <h3>Total Servers</h3>
+                            <p id="total-servers">0</p>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon safe-icon"><i class="fa-solid fa-check-circle"></i></div>
+                        <div class="stat-details">
+                            <h3>Healthy Servers</h3>
+                            <p id="healthy-servers">0</p>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon alert-icon"><i class="fa-solid fa-triangle-exclamation"></i></div>
+                        <div class="stat-details">
+                            <h3>Active Alerts</h3>
+                            <p id="active-alerts">0</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Main Grid -->
+                <div class="content-grid">
+                    <!-- Servers List -->
+                    <div class="card servers-card">
+                        <div class="card-header">
+                            <h2><i class="fa-solid fa-network-wired"></i> Monitored Servers</h2>
+                            <button class="btn-refresh" onclick="fetchServers()"><i class="fa-solid fa-rotate-right"></i></button>
+                        </div>
+                        <div class="table-container">
+                            <table class="data-table">
+                                <thead>
+                                    <tr>
+                                        <th>Server Name</th>
+                                        <th>IP Address</th>
+                                        <th>Location</th>
+                                        <th>Status</th>
+                                        <th>Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="servers-table-body">
+                                    <!-- Populated dynamically -->
+                                    <tr><td colspan="5" style="text-align:center;">Loading servers...</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-- Alerts List -->
+                    <div class="card alerts-card" id="alerts">
+                        <div class="card-header">
+                            <h2><i class="fa-solid fa-bell"></i> Recent Alerts</h2>
+                        </div>
+                        <div class="alerts-list" id="alerts-list-container">
+                            <!-- Populated dynamically -->
+                            <div class="empty-state">No active alerts</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Metrics Modal (Hidden by default) -->
+                <div id="metrics-modal" class="modal">
+                    <div class="modal-content">
+                        <span class="close-btn" onclick="closeModal()">&times;</span>
+                        <h2 id="modal-server-name">Server Metrics</h2>
+                        <div class="metrics-grid">
+                            <div class="metric-box">
+                                <h4>CPU Usage</h4>
+                                <div class="progress-bar"><div class="progress" id="cpu-progress" style="width: 0%"></div></div>
+                                <span id="cpu-text">0%</span>
+                            </div>
+                            <div class="metric-box">
+                                <h4>Memory Usage</h4>
+                                <div class="progress-bar"><div class="progress" id="mem-progress" style="width: 0%"></div></div>
+                                <span id="mem-text">0%</span>
+                            </div>
+                            <div class="metric-box">
+                                <h4>Disk Usage</h4>
+                                <div class="progress-bar"><div class="progress" id="disk-progress" style="width: 0%"></div></div>
+                                <span id="disk-text">0%</span>
+                            </div>
+                        </div>
+                        <button class="btn-primary" onclick="closeModal()">Close</button>
+                    </div>
+                </div>
+
+            </div>
+        </main>
+    </div>
+    <script src="app.js"></script>
+</body>
+</html>

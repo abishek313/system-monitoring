@@ -1,0 +1,15 @@
+# Node.js
+backend/node_modules/
+backend/npm-debug.log
+
+# Python
+agent/venv/
+agent/__pycache__/
+*.pyc
+
+# Environment variables (Never commit passwords!)
+config/.env
+
+# OS generated files
+.DS_Store
+Thumbs.db

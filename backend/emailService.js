@@ -1,3 +1,4 @@
+require("dotenv").config({ path: '../config/.env' });
 const db = require("./db");
 const nodemailer = require("nodemailer");
 

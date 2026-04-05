@@ -1,144 +1,405 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Server Monitor Dashboard</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <title>SysGuard - Server Monitoring</title>
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Icons -->
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet" />
+    <!-- Chart.js for premium charts -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- CSS -->
     <link rel="stylesheet" href="style.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
+
 <body>
-    <div class="app-container">
-        <!-- Sidebar -->
-        <aside class="sidebar">
-            <div class="logo">
-                <i class="fa-solid fa-server"></i>
-                <h2>SysMonitor</h2>
+
+    <!-- Background Decoration for Glassmorphism -->
+    <div class="bg-shape shape-1"></div>
+    <div class="bg-shape shape-2"></div>
+    <div class="bg-shape shape-3"></div>
+
+    <!-- Login View overlay -->
+    <div class="login-wrapper" id="loginView">
+        <div class="login-container glass-panel">
+            <div class="login-header">
+                <div class="logo justify-center">
+                    <span class="material-symbols-outlined logo-icon">dns</span>
+                    <h2>SysGuard</h2>
+                </div>
+                <p>Sign in to your administration dashboard</p>
             </div>
-            <nav class="nav-menu">
-                <a href="#" class="nav-item active"><i class="fa-solid fa-chart-line"></i> Dashboard</a>
-                <a href="#servers" class="nav-item"><i class="fa-solid fa-network-wired"></i> Servers</a>
-                <a href="#alerts" class="nav-item"><i class="fa-solid fa-bell"></i> Alerts</a>
-                <a href="#settings" class="nav-item"><i class="fa-solid fa-gear"></i> Settings</a>
+
+            <div id="loginSection">
+                <form class="login-form" id="loginForm">
+                    <div class="input-group">
+                        <label for="email">Email Address</label>
+                        <div class="input-with-icon">
+                            <span class="material-symbols-outlined">mail</span>
+                            <input type="email" id="email" placeholder="admin@sysguard.com" required>
+                        </div>
+                    </div>
+
+                    <div class="input-group">
+                        <label for="password">Password</label>
+                        <div class="input-with-icon">
+                            <span class="material-symbols-outlined">lock</span>
+                            <input type="password" id="password" placeholder="••••••••" required>
+                        </div>
+                    </div>
+
+                    <div class="login-options">
+                        <label class="remember-me">
+                            <input type="checkbox">
+                            <span>Remember me</span>
+                        </label>
+                        <a href="#" class="forgot-password">Forgot Password?</a>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary login-btn" id="loginBtn">
+                        Sign In <span class="material-symbols-outlined">arrow_forward</span>
+                    </button>
+                </form>
+                <div class="login-footer">
+                    <p>Don't have an account? <a href="#" id="toRegister">Register here</a></p>
+                </div>
+            </div>
+
+            <div id="registerSection" style="display: none;">
+                <form class="login-form" id="registerForm">
+                    <div class="input-group">
+                        <label for="regName">Full Name</label>
+                        <div class="input-with-icon">
+                            <span class="material-symbols-outlined">person</span>
+                            <input type="text" id="regName" placeholder="Abishek Subodh" required>
+                        </div>
+                    </div>
+                    <div class="input-group">
+                        <label for="regPhone">Phone Number</label>
+                        <div class="input-with-icon">
+                            <span class="material-symbols-outlined">call</span>
+                            <input type="text" id="regPhone" placeholder="1234567890" required>
+                        </div>
+                    </div>
+                    <div class="input-group">
+                        <label for="regEmail">Email Address</label>
+                        <div class="input-with-icon">
+                            <span class="material-symbols-outlined">mail</span>
+                            <input type="email" id="regEmail" placeholder="admin@sysguard.com" required>
+                        </div>
+                    </div>
+                    <div class="input-group">
+                        <label for="regPassword">Password</label>
+                        <div class="input-with-icon">
+                            <span class="material-symbols-outlined">lock</span>
+                            <input type="password" id="regPassword" placeholder="••••••••" required>
+                        </div>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary login-btn" id="registerBtn">
+                        Register <span class="material-symbols-outlined">person_add</span>
+                    </button>
+                </form>
+                <div class="login-footer">
+                    <p>Already have an account? <a href="#" id="toLogin">Sign in here</a></p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Dashboard App (Hidden until login) -->
+    <div class="app-container" id="appView" style="display: none;">
+
+        <!-- Sidebar Navigation -->
+        <aside class="sidebar glass-panel">
+            <div class="sidebar-header">
+                <div class="logo">
+                    <span class="material-symbols-outlined logo-icon">dns</span>
+                    <h2>SysGuard</h2>
+                </div>
+            </div>
+
+            <nav class="sidebar-nav">
+                <button class="nav-item active" data-view="dashboard-view">
+                    <span class="material-symbols-outlined">dashboard</span>
+                    <span>Dashboard</span>
+                </button>
+                <button class="nav-item" data-view="servers-view">
+                    <span class="material-symbols-outlined">storage</span>
+                    <span>Servers</span>
+                </button>
+                <button class="nav-item" data-view="metrics-view">
+                    <span class="material-symbols-outlined">monitoring</span>
+                    <span>Metrics</span>
+                </button>
+                <button class="nav-item" data-view="alerts-view">
+                    <span class="material-symbols-outlined">warning</span>
+                    <span>Alerts</span>
+                </button>
+                <button class="nav-item" data-view="admins-view">
+                    <span class="material-symbols-outlined">shield_person</span>
+                    <span>Admins</span>
+                </button>
+                <button class="nav-item" data-view="emails-view">
+                    <span class="material-symbols-outlined">mail</span>
+                    <span>Email Logs</span>
+                </button>
             </nav>
+
+            <div class="user-profile">
+                <img src="https://ui-avatars.com/api/?name=Admin&background=random&color=fff" alt="Admin Profile"
+                    class="avatar">
+                <div class="user-info">
+                    <h4>Super Admin</h4>
+                    <p>admin@sysguard.com</p>
+                </div>
+            </div>
         </aside>
 
-        <!-- Main Content -->
+        <!-- Main Content Area -->
         <main class="main-content">
-            <header class="topbar">
+
+            <!-- Top Header -->
+            <header class="top-header glass-panel">
                 <div class="search-bar">
-                    <i class="fa-solid fa-search"></i>
-                    <input type="text" placeholder="Search servers or alerts...">
+                    <span class="material-symbols-outlined">search</span>
+                    <input type="text" placeholder="Search servers, alerts, or admins...">
                 </div>
-                <div class="user-profile">
-                    <div class="notification-bell">
-                        <i class="fa-solid fa-bell"></i>
+                <div class="header-actions">
+                    <button class="icon-btn notification-btn">
+                        <span class="material-symbols-outlined">notifications</span>
                         <span class="badge" id="alert-badge">0</span>
-                    </div>
-                    <img src="https://ui-avatars.com/api/?name=Admin&background=6366f1&color=fff" alt="Admin" class="avatar">
+                    </button>
+                    <button class="icon-btn">
+                        <span class="material-symbols-outlined">settings</span>
+                    </button>
                 </div>
             </header>
 
-            <div class="dashboard-content">
-                <div class="header-section">
-                    <h1>Dashboard Overview</h1>
-                    <p>Real-time server monitoring and email alert system</p>
-                </div>
+            <!-- Views Container -->
+            <div class="views-container">
 
-                <!-- Stats Cards -->
-                <div class="stats-grid">
-                    <div class="stat-card">
-                        <div class="stat-icon server-icon"><i class="fa-solid fa-server"></i></div>
-                        <div class="stat-details">
-                            <h3>Total Servers</h3>
-                            <p id="total-servers">0</p>
-                        </div>
+                <!-- 1. Dashboard View -->
+                <section id="dashboard-view" class="view-section active">
+                    <div class="header-section">
+                        <h1>System Overview</h1>
+                        <p>Real-time monitoring and analytics</p>
                     </div>
-                    <div class="stat-card">
-                        <div class="stat-icon safe-icon"><i class="fa-solid fa-check-circle"></i></div>
-                        <div class="stat-details">
-                            <h3>Healthy Servers</h3>
-                            <p id="healthy-servers">0</p>
-                        </div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="stat-icon alert-icon"><i class="fa-solid fa-triangle-exclamation"></i></div>
-                        <div class="stat-details">
-                            <h3>Active Alerts</h3>
-                            <p id="active-alerts">0</p>
-                        </div>
-                    </div>
-                </div>
 
-                <!-- Main Grid -->
-                <div class="content-grid">
-                    <!-- Servers List -->
-                    <div class="card servers-card">
-                        <div class="card-header">
-                            <h2><i class="fa-solid fa-network-wired"></i> Monitored Servers</h2>
-                            <button class="btn-refresh" onclick="fetchServers()"><i class="fa-solid fa-rotate-right"></i></button>
+                    <div class="stats-grid">
+                        <div class="stat-card glass-panel">
+                            <div class="stat-icon cpu-icon"><span class="material-symbols-outlined">memory</span></div>
+                            <div class="stat-details">
+                                <p>Avg CPU Usage</p>
+                                <h3 id="dash-cpu-avg">--%</h3>
+                            </div>
                         </div>
-                        <div class="table-container">
-                            <table class="data-table">
-                                <thead>
-                                    <tr>
-                                        <th>Server Name</th>
-                                        <th>IP Address</th>
-                                        <th>Location</th>
-                                        <th>Status</th>
-                                        <th>Action</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="servers-table-body">
-                                    <!-- Populated dynamically -->
-                                    <tr><td colspan="5" style="text-align:center;">Loading servers...</td></tr>
-                                </tbody>
-                            </table>
+                        <div class="stat-card glass-panel">
+                            <div class="stat-icon mem-icon"><span class="material-symbols-outlined">memory_alt</span>
+                            </div>
+                            <div class="stat-details">
+                                <p>Avg Mem Usage</p>
+                                <h3 id="dash-mem-avg">--%</h3>
+                            </div>
+                        </div>
+                        <div class="stat-card glass-panel">
+                            <div class="stat-icon server-icon"><span class="material-symbols-outlined">dns</span></div>
+                            <div class="stat-details">
+                                <p>Active Servers</p>
+                                <h3 id="dash-server-count">--</h3>
+                            </div>
+                        </div>
+                        <div class="stat-card glass-panel">
+                            <div class="stat-icon alert-icon"><span class="material-symbols-outlined">error</span></div>
+                            <div class="stat-details">
+                                <p>Recent Alerts</p>
+                                <h3 id="dash-alert-count">--</h3>
+                            </div>
                         </div>
                     </div>
 
-                    <!-- Alerts List -->
-                    <div class="card alerts-card" id="alerts">
-                        <div class="card-header">
-                            <h2><i class="fa-solid fa-bell"></i> Recent Alerts</h2>
+                    <div class="charts-grid">
+                        <div class="chart-container glass-panel">
+                            <h3>System Resource Utilization (Avg)</h3>
+                            <div class="chart-wrapper">
+                                <canvas id="resourceChart"></canvas>
+                            </div>
                         </div>
-                        <div class="alerts-list" id="alerts-list-container">
-                            <!-- Populated dynamically -->
-                            <div class="empty-state">No active alerts</div>
+                        <div class="glass-panel alerts-summary-panel">
+                            <h3>Recent Critical Alerts</h3>
+                            <ul class="recent-alerts-list" id="dash-recent-alerts">
+                                <!-- Populated by JS -->
+                            </ul>
                         </div>
                     </div>
-                </div>
-                
-                <!-- Metrics Modal (Hidden by default) -->
-                <div id="metrics-modal" class="modal">
-                    <div class="modal-content">
-                        <span class="close-btn" onclick="closeModal()">&times;</span>
-                        <h2 id="modal-server-name">Server Metrics</h2>
-                        <div class="metrics-grid">
-                            <div class="metric-box">
-                                <h4>CPU Usage</h4>
-                                <div class="progress-bar"><div class="progress" id="cpu-progress" style="width: 0%"></div></div>
-                                <span id="cpu-text">0%</span>
-                            </div>
-                            <div class="metric-box">
-                                <h4>Memory Usage</h4>
-                                <div class="progress-bar"><div class="progress" id="mem-progress" style="width: 0%"></div></div>
-                                <span id="mem-text">0%</span>
-                            </div>
-                            <div class="metric-box">
-                                <h4>Disk Usage</h4>
-                                <div class="progress-bar"><div class="progress" id="disk-progress" style="width: 0%"></div></div>
-                                <span id="disk-text">0%</span>
-                            </div>
+                </section>
+
+                <!-- 2. Servers View -->
+                <section id="servers-view" class="view-section hidden">
+                    <div class="header-section flex-between">
+                        <div>
+                            <h1>Managed Servers</h1>
+                            <p>Directory of all registered systems</p>
                         </div>
-                        <button class="btn-primary" onclick="closeModal()">Close</button>
+                        <button class="btn btn-primary"><span class="material-symbols-outlined">add</span> Add
+                            Server</button>
                     </div>
-                </div>
+                    <div class="table-container glass-panel">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Server Name</th>
+                                    <th>IP Address</th>
+                                    <th>Location</th>
+                                    <th>Status</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="servers-tbody">
+                                <!-- Populated by JS -->
+                            </tbody>
+                        </table>
+                    </div>
+                </section>
+
+                <!-- 3. Metrics View -->
+                <section id="metrics-view" class="view-section hidden">
+                    <div class="header-section">
+                        <h1>Performance Metrics</h1>
+                        <p>Detailed resource utilization logs</p>
+                    </div>
+                    <div class="table-container glass-panel">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Metric ID</th>
+                                    <th>Server</th>
+                                    <th>CPU Usage</th>
+                                    <th>Memory Usage</th>
+                                    <th>Disk Usage</th>
+                                    <th>Recorded Time</th>
+                                </tr>
+                            </thead>
+                            <tbody id="metrics-tbody">
+                                <!-- Populated by JS -->
+                            </tbody>
+                        </table>
+                    </div>
+                </section>
+
+                <!-- 4. Alerts View -->
+                <section id="alerts-view" class="view-section hidden">
+                    <div class="header-section">
+                        <h1>System Alerts</h1>
+                        <p>Automated threshold violation warnings</p>
+                    </div>
+                    <div class="table-container glass-panel">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Alert ID</th>
+                                    <th>Server</th>
+                                    <th>Message</th>
+                                    <th>Time</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody id="alerts-tbody">
+                                <!-- Populated by JS -->
+                            </tbody>
+                        </table>
+                    </div>
+                </section>
+
+                <!-- 5. Admins View -->
+                <section id="admins-view" class="view-section hidden">
+                    <div class="header-section flex-between">
+                        <div>
+                            <h1>System Administrators</h1>
+                            <p>Manage alert recipients and roles</p>
+                        </div>
+                        <button class="btn btn-primary"><span class="material-symbols-outlined">person_add</span> Add
+                            Admin</button>
+                    </div>
+                    <div class="admin-grid" id="admins-grid">
+                        <!-- Populated by JS -->
+                    </div>
+                </section>
+
+                <!-- 6. Email Logs View -->
+                <section id="emails-view" class="view-section hidden">
+                    <div class="header-section">
+                        <h1>Email Notifications Log</h1>
+                        <p>History of automated alerts sent to administrators</p>
+                    </div>
+                    <div class="table-container glass-panel">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Log ID</th>
+                                    <th>Alert Ref</th>
+                                    <th>Admin Ref</th>
+                                    <th>Status</th>
+                                    <th>Sent Time</th>
+                                </tr>
+                            </thead>
+                            <tbody id="emails-tbody">
+                                <!-- Populated by JS -->
+                            </tbody>
+                        </table>
+                    </div>
+                </section>
 
             </div>
         </main>
     </div>
+
+    </div>
+
+    <div class="modal-overlay" id="editAdminModal" style="display: none;">
+        <div class="modal-container glass-panel">
+            <div class="modal-header">
+                <h3>Edit Administrator</h3>
+                <button class="icon-btn" id="closeEditAdminModal"><span class="material-symbols-outlined">close</span></button>
+            </div>
+            <form id="editAdminForm" class="login-form">
+                <input type="hidden" id="editAdminId">
+                <div class="input-group">
+                    <label for="editAdminName">Full Name</label>
+                    <div class="input-with-icon">
+                        <span class="material-symbols-outlined">person</span>
+                        <input type="text" id="editAdminName" required>
+                    </div>
+                </div>
+                <div class="input-group">
+                    <label for="editAdminPhone">Phone Number</label>
+                    <div class="input-with-icon">
+                        <span class="material-symbols-outlined">call</span>
+                        <input type="text" id="editAdminPhone" required>
+                    </div>
+                </div>
+                <div class="input-group">
+                    <label for="editAdminEmail">Email Address</label>
+                    <div class="input-with-icon">
+                        <span class="material-symbols-outlined">mail</span>
+                        <input type="email" id="editAdminEmail" required>
+                    </div>
+                </div>
+                <button type="submit" class="btn btn-primary" style="width: 100%; justify-content: center; margin-top: 10px;">
+                    Update Admin <span class="material-symbols-outlined">save</span>
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Scripts -->
     <script src="app.js"></script>
 </body>
+
 </html>

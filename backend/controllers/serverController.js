@@ -23,7 +23,7 @@ exports.getServers = (req, res) => {
     }
 
     if (result.length === 0) {
-      return res.json({ message: "No servers found" });
+      return res.json([]);
     }
 
     res.json(result);

@@ -53,3 +53,20 @@ exports.getMetrics = (req, res) => {
     }
   );
 };
+
+exports.getAllMetrics = (req, res) => {
+  db.query(
+    "SELECT * FROM METRICS ORDER BY recorded_time DESC",
+    (err, result) => {
+      if (err) {
+        return res.status(500).json({ error: err.message });
+      }
+
+      if (result.length === 0) {
+        return res.json({ message: "No metrics found" });
+      }
+
+      res.json(result);
+    }
+  );
+};

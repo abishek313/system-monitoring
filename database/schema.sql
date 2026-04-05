@@ -6,7 +6,8 @@ CREATE TABLE IF NOT EXISTS ADMIN (
     admin_id INT AUTO_INCREMENT PRIMARY KEY,
     admin_name VARCHAR(100) NOT NULL,
     phone_number VARCHAR(15),
-    email VARCHAR(100) NOT NULL
+    email VARCHAR(100) NOT NULL,
+    password VARCHAR(255) NOT NULL DEFAULT 'admin123'
 );
 
 CREATE TABLE IF NOT EXISTS SERVERS (
@@ -121,4 +122,4 @@ END //
 DELIMITER ;
 
 -- Insert a default admin for testing purposes
-INSERT IGNORE INTO ADMIN (admin_id, admin_name, phone_number, email) VALUES (1, 'Abishek', '1234567890', 'admin@example.com');
+INSERT IGNORE INTO ADMIN (admin_id, admin_name, phone_number, email, password) VALUES (1, 'Abishek', '1234567890', 'abisheksubodh58@gmail.com', 'admin123');
